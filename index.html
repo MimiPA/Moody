@@ -1,0 +1,28 @@
+<html>
+<form id="myForm">
+  <input type="text" name="nama" placeholder="Nama" required>
+  <input type="email" name="email" placeholder="Email" required>
+  <textarea name="pesan" placeholder="Pesan Anda" required></textarea>
+  <button type="submit">Kirim</button>
+</form>
+
+<script>
+  const scriptURL = 'URL_WEB_APP_KAMU'; // Ganti dengan URL dari langkah 2
+  const form = document.getElementById('myForm');
+
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const data = {
+      nama: form.nama.value,
+      email: form.email.value,
+      pesan: form.pesan.value
+    };
+    fetch(scriptURL, {
+      method: 'POST',
+      body: JSON.stringify(data)
+    })
+    .then(response => alert("Data berhasil dikirim!"))
+    .catch(error => alert("Terjadi kesalahan"));
+  });
+</script>
+</html>
