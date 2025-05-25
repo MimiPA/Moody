@@ -1,36 +1,60 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
+
 <head>
-  <meta charset="UTF-8">
-  <title>Tampilkan Nama</title>
+  <meta charset="UTF-8" />
+  <title>Website Nama Dinamis</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 40px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      color: #333;
+    }
+
+    .loading {
+      color: gray;
+    }
+
+    .not-found {
+      color: red;
+    }
+  </style>
 </head>
+
 <body>
-  <h1 id="header">Memuat nama...</h1>
+  <h1 id="header" class="loading">Memuat data...</h1>
 
   <script>
-    const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSNvAzkWLLQTqmkzFwsb88uvSHuqDUiZvYEZNCOVmDjA2_n1yhh84pTgBVVIuDzjlav7K2WbbOCU6Om/pub?output=csv';
-
-    // Ambil parameter dari URL
-    const query = window.location.search;
-    const nameParam = query ? query.substring(1).toLowerCase() : null;
+    const apiUrl = "https://script.google.com/macros/s/AKfycbx12345XYZ/exec";
 
     async function loadData() {
-      const response = await fetch(csvUrl);
-      const text = await response.text();
+      try {
+        const res = await fetch(apiUrl);
+        const data = await res.json();
 
-      const rows = text.split('\n').slice(1); // Buang header
-      const usernames = rows.map(row => row.trim().toLowerCase()).filter(name => name);
+        const query = window.location.search.substring(1).toLowerCase(); // ambil ?nama
+        const found = data.find(item => item.Username.toLowerCase() === query);
 
-      const header = document.getElementById('header');
-
-      if (nameParam && usernames.includes(nameParam)) {
-        header.textContent = nameParam.charAt(0).toUpperCase() + nameParam.slice(1);
-      } else {
-        header.textContent = 'Nama tidak ditemukan';
+        const header = document.getElementById("header");
+        if (found) {
+          header.textContent = found.Username;
+          header.classList.remove("loading", "not-found");
+        } else {
+          header.textContent = "Nama tidak ditemukan";
+          header.classList.add("not-found");
+        }
+      } catch (error) {
+        document.getElementById("header").textContent = "Gagal mengambil data";
       }
     }
 
     loadData();
   </script>
 </body>
+
 </html>
