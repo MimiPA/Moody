@@ -2,40 +2,31 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Nama dari GSheet</title>
+  <title>Tampilkan Nama</title>
 </head>
 <body>
-  <h1 id="header">Pilih Nama</h1>
-  <select id="userSelect"></select>
+  <h1 id="header">Memuat...</h1>
 
   <script>
     const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSNvAzkWLLQTqmkzFwsb88uvSHuqDUiZvYEZNCOVmDjA2_n1yhh84pTgBVVIuDzjlav7K2WbbOCU6Om/pub?output=csv';
+
+    // Ambil parameter dari URL
+    const query = window.location.search;
+    const nameParam = query ? query.substring(1).toLowerCase() : null;
 
     async function loadData() {
       const response = await fetch(csvUrl);
       const text = await response.text();
 
-      const rows = text.split('\n').slice(1); // Hilangkan header
-      const usernames = rows.map(row => row.trim()).filter(name => name);
+      const rows = text.split('\n').slice(1); // Buang header
+      const usernames = rows.map(row => row.trim().toLowerCase()).filter(name => name);
 
-      const select = document.getElementById('userSelect');
       const header = document.getElementById('header');
 
-      usernames.forEach(name => {
-        const option = document.createElement('option');
-        option.value = name;
-        option.textContent = name;
-        select.appendChild(option);
-      });
-
-      select.addEventListener('change', () => {
-        header.textContent = select.value;
-      });
-
-      // Set default
-      if (usernames.length > 0) {
-        select.value = usernames[0];
-        header.textContent = usernames[0];
+      if (nameParam && usernames.includes(nameParam)) {
+        header.textContent = nameParam.charAt(0).toUpperCase() + nameParam.slice(1);
+      } else {
+        header.textContent = 'Nama tidak ditemukan';
       }
     }
 
